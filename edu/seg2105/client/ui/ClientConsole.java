@@ -107,7 +107,7 @@ public class ClientConsole implements ChatIF
     String cmd = parts[0].toLowerCase();
 
     switch (cmd) {
-      // quit program
+      //quit program
       case "#quit":
         client.quit();
         break;
@@ -117,25 +117,25 @@ public class ClientConsole implements ChatIF
         client.logoff();
         break;
 
-      // set host when disconnected
+      //set host when disconnect
       case "#sethost":
         if (parts.length < 2) { display("Usage: #sethost <host>"); break; }
         client.safeSetHost(parts[1]);
         break;
 
-      // set port when disconnected
+      //set port when disconnected
       case "#setport":
         if (parts.length < 2) { display("Usage: #setport <port>"); break; }
         try { client.safeSetPort(Integer.parseInt(parts[1])); }
         catch (NumberFormatException e) { display("Port must be a number"); }
         break;
 
-      // connect
+      //connect
       case "#login":
         client.login();
         break;
 
-      // show host
+      //show host
       case "#gethost":
         display("Current host: " + client.currentHost());
         break;

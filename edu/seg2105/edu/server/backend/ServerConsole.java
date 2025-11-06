@@ -14,7 +14,7 @@ public class ServerConsole {
     server = new EchoServer(port);
   }
 
-  // read admin input and handle commands
+  //read admin input and handle commands
   public void accept() {
     try {
       String line;
@@ -32,23 +32,23 @@ public class ServerConsole {
         String cmd = parts[0].toLowerCase();
 
         switch (cmd) {
-          case "#quit": // exit program
+          case "#quit": //exit program
             try { server.close(); } catch (IOException ignore) {}
             System.out.println("Server quitting");
             System.exit(0);
             break;
 
-          case "#stop": // stop listening
+          case "#stop": //stop listening
             try { server.stopListening(); System.out.println("Server stopped listening"); }
             catch (Exception e) { System.out.println("Stop failed: " + e.getMessage()); }
             break;
 
-          case "#close": // close and drop clients
+          case "#close": //close and drop clients
             try { server.close(); }
             catch (Exception e) { System.out.println("Close failed: " + e.getMessage()); }
             break;
 
-          case "#setport": // change port only when closed
+          case "#setport": //change port only when closed
             if (parts.length < 2) { System.out.println("Usage: #setport <port>"); break; }
             if (server.isListening()) {
               System.out.println("Cannot set port while server is open. Use #stop or #close first.");
@@ -63,12 +63,14 @@ public class ServerConsole {
             }
             break;
 
-          case "#start": // start listening
+          //start listening
+          case "#start": 
             try { server.listen(); } 
             catch (IOException e) { System.out.println("Start failed: " + e.getMessage()); }
             break;
 
-          case "#getport": // show port
+         // show port
+          case "#getport":
             System.out.println("Port: " + server.getPort());
             break;
 
@@ -83,7 +85,7 @@ public class ServerConsole {
 
   // entry point
   public static void main(String[] args) {
-    int port = EchoServer.DEFAULT_PORT; // default
+    int port = EchoServer.DEFAULT_PORT; //default
     try { if (args.length > 0) port = Integer.parseInt(args[0]); } catch (NumberFormatException ignore) {}
 
     ServerConsole console = new ServerConsole(port);

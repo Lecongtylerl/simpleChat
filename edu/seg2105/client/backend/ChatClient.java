@@ -42,7 +42,7 @@ public class ChatClient extends AbstractClient
    * @param port The port number to connect on.
    * @param clientUI The interface type variable.
    */
-  // add loginId and auto-login after connect
+  //add loginId and auto-login
   public ChatClient(String host, int port, ChatIF clientUI, String loginId) 
     throws IOException 
   {
@@ -67,14 +67,14 @@ public class ChatClient extends AbstractClient
     clientUI.display(msg.toString());
   }
 
-  // exact test output on server shutdown
+  //exact test output on server shutdown
   @Override
   protected void connectionClosed() {
     System.out.println("The server has shut down.");
     System.exit(0);
   }
 
-  // exact test output on server exception
+  //exact test output on server exception
   @Override
   protected void connectionException(Exception exception) {
     System.out.println("The server has shut down.");
@@ -110,7 +110,7 @@ public class ChatClient extends AbstractClient
     }
   }
 
-  // set host when disconnected
+  //set host when disconnect
   public void safeSetHost(String host) {
     if (isConnected()) {
       clientUI.display("Cannot set host while connected");
@@ -120,7 +120,7 @@ public class ChatClient extends AbstractClient
     clientUI.display("Host set to " + host);
   }
 
-  // set port when disconnected
+  //set port when disconnect
   public void safeSetPort(int port) {
     if (isConnected()) {
       clientUI.display("Cannot set port while connected");
