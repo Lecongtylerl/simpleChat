@@ -3,7 +3,6 @@ package edu.seg2105.edu.server.backend;
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
-
 import ocsf.server.*;
 
 /**
@@ -14,6 +13,7 @@ import ocsf.server.*;
  * @author Dr Robert Lagani&egrave;re
  * @author Fran&ccedil;ois B&eacute;langer
  * @author Paul Holden
+ * @version July 2000
  */
 public class EchoServer extends AbstractServer 
 {
@@ -36,7 +36,6 @@ public class EchoServer extends AbstractServer
     super(port);
   }
 
-  
   //Instance methods ************************************************
   
   /**
@@ -45,11 +44,36 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
+  public void handleMessageFromClient(Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+    String s = String.valueOf(msg);
+
+    // handle the very first #login per testcases
+    if (s.startsWith("#login ")) {
+      System.out.println("Message received: " + s + " from null.");
+      if (client.getInfo("loginId") != null) {
+        try { client.sendToClient("ERROR - Already logged in"); } catch (Exception ignore) {}
+        try { client.close(); } catch (Exception ignore) {}
+        return;
+      }
+      String loginId = s.substring(7).trim();
+      client.setInfo("loginId", loginId);
+      sendToAllClients(loginId + " has logged on.");
+      System.out.println(loginId + " has logged on.");
+      return;
+    }
+
+    // require login before normal messages
+    String loginId = (String) client.getInfo("loginId");
+    if (loginId == null) {
+      try { client.sendToClient("ERROR - You must login first"); } catch (Exception ignore) {}
+      try { client.close(); } catch (Exception ignore) {}
+      return;
+    }
+
+    // echo to all with login id prefix and log
+    System.out.println("Message received: " + s + " from " + loginId);
+    this.sendToAllClients(loginId + "> " + s);
   }
     
   /**
@@ -58,8 +82,8 @@ public class EchoServer extends AbstractServer
    */
   protected void serverStarted()
   {
-    System.out.println
-      ("Server listening for connections on port " + getPort());
+    // exact wording for tests 2001/2012/2009
+    System.out.println("Server listening for clients on port " + getPort());
   }
   
   /**
@@ -68,10 +92,27 @@ public class EchoServer extends AbstractServer
    */
   protected void serverStopped()
   {
-    System.out.println
-      ("Server has stopped listening for connections.");
+    System.out.println("Server has stopped listening for connections.");
   }
-  
+
+  // print on client connect
+  @Override
+  protected void clientConnected(ConnectionToClient client)
+  {
+    System.out.println("A new client has connected to the server.");
+  }
+
+  // show login id if known on disconnect
+  @Override
+  protected synchronized void clientDisconnected(ConnectionToClient client)
+  {
+    Object id = client.getInfo("loginId");
+    if (id != null) {
+      System.out.println(id + " has disconnected.");
+    } else {
+      System.out.println("A client has disconnected.");
+    }
+  }
   
   //Class methods ***************************************************
   
